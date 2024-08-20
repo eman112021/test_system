@@ -3,6 +3,12 @@ import axios from 'axios';
 export default {
 
 
+    GetReplies(sends_id) {
+        return axios.get(`/api/Mail/GetRepliesList?SendsToId=${sends_id}`);
+        //  return axios.get(`http://mail:82/api/Reply/GetReplyById?department_id=${department}&mail_id=${mail}`);
+    },
+
+
     delete_reply(id, userid) {
 
         return axios.put(`/api/Reply/DeleteReply?id=${id}&&UserId=${userid}`);
@@ -31,6 +37,26 @@ export default {
             //  return axios.post(`http://mail:82/api/Mail/AddMail`, info)
     },
 
+
+    UpdateResendMail(Mail) {
+        return axios.put(`/api/Resend/UpdateResendMail`, Mail)
+            //  return axios.put(`http://mail:82/api/Mail/UpdateMail`, Mail)
+    },
+
+
+
+    Save_resend(info ) {
+        return axios.post(`/api/Resend/ResendMail`, info)
+            //  return axios.post(`http://mail:82/api/Mail/AddMail`, info)
+    },
+
+    Send_resend(mailId, userId,department_id1) {
+        return axios.put(`/api/Resend/SendResendMail?mail_id=${mailId}&user_id=${userId}&department_id=${department_id1}`)
+            //  return axios.put(`http://mail:82/api/Mail/Send?mailid=${mailId}&userId=${userId}`)
+    },
+
+
+
     SendMail(mailId, userId) {
         return axios.put(`/api/Mail/Send?mailid=${mailId}&userId=${userId}`)
             //  return axios.put(`http://mail:82/api/Mail/Send?mailid=${mailId}&userId=${userId}`)
@@ -51,10 +77,15 @@ export default {
         //  return axios.delete(`http://mail:82/api/Mail/DeleteMangament?mail_id=${mailId}&departmentId=${department_id}&userId=${userId}`);
     },
 
+    cancel_sending_to_department_resend(sends_id, section_id, userId) {
+        return axios.put(`/api/Resend/DeleteSections?sends_to_id=${sends_id}&section_note_id=${section_id}&userId=${userId}`);
+        //  return axios.delete(`http://mail:82/api/Mail/DeleteMangament?mail_id=${mailId}&departmentId=${department_id}&userId=${userId}`);
+    },
 
-    inboxs(id, mailType, mangment_id, date_from, date_to, by_date_of_reply, mail_id, general_incoming_number, summary, department_id, side_id, measure_id, classification_id, mail_case_id,s_number, page_num, page_size) {
-        return axios.get(`/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&page_num=${page_num}&page_size=${page_size}`);
-        // return axios.get(`http://mail:82/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
+
+    inboxs(id, mailType, mangment_id, date_from, date_to, by_date_of_reply, mail_id, general_incoming_number, summary, department_id, side_id, measure_id, classification_id, mail_case_id,s_number,redirection, page_num, page_size) {
+        return axios.get(`/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&entity_reference_number=${s_number}&resend_mail=${redirection}&page_num=${page_num}&page_size=${page_size}`);
+        //     &resend_mail=${redirection}               return axios.get(`http://mail:82/api/ExternalMails/GetIncomingMail?userid=${id}&mailNumType=${mailType}&mangment=${mangment_id}&date_from=${date_from}&date_to=${date_to}&Replay_Date=${by_date_of_reply}&mailnum=${mail_id}&genral_incoming_num=${general_incoming_number}&summary=${summary}&Department_filter=${department_id}&TheSection=${side_id}&Measure_filter=${measure_id}&Classfication=${classification_id}&mail_state=${mail_case_id}&page_num=${page_num}&page_size=${page_size}`);
     },
 
     sent(id, mailType, mangment_id, date_from, date_to, by_date_of_reply, mail_id, general_incoming_number, summary, department_id, side_id, measure_id, classification_id, mail_case_id,s_number,certified, page_num, page_size) {
@@ -91,8 +122,14 @@ export default {
 
 
 
+    
 
 
+
+    show_senders2(id,department_id,resend_from) {
+        return axios.get(`/api/Mail/GetDetaliesInIncomingMails?mail_id=${id}&department_id=${department_id}&resendfrom=${resend_from}`);
+        //  return axios.get(`http://mail:82/api/Mail/GetDetalies?mail_id=${id}`);
+    },
 
     show_senders(id) {
         return axios.get(`/api/Mail/GetDetalies?mail_id=${id}`);
@@ -120,9 +157,21 @@ export default {
     },
 
     AllDepartments() {
-        return axios.get(`/api/WeatherForecast/GetAllDepartments`);
+        return axios.get(`/api/Department/GetAll`);
         //  return axios.get(`http://mail:82/api/WeatherForecast/GetAllDepartments`);
     },
+
+    AllDepartments_and_mysections(id) {
+        return axios.get(`/api/Department/GetAllDepartmentAndMysections?dep=${id}`);
+        //  return axios.get(`http://mail:82/api/WeatherForecast/GetAllDepartments`);
+    },
+
+    get_department_and_sections(id) {
+        return axios.get(`/api/Department/GetDepartmentandSections?dep=${id}`);
+        //  return axios.get(`http://mail:82/api/WeatherForecast/GetAllDepartments`);
+    },
+
+
 
     AllSides() {
         return axios.get(`/api/ExternalMails/Get_Extirnl_Sections`);
@@ -134,8 +183,21 @@ export default {
         //  return axios.get(`http://mail:82/api/WeatherForecast/GetMailInfo?mail_id=${id}&Department_Id=${department}&type=${type}`);
     },
 
-    GetAllDocuments(id, userId) {
-        return axios.get(`/api/Resources/GetMailResources?mail_id=${id}&userId=${userId}`);
+    GetInboxMailById2(id, department, type) {
+        return axios.get(`/api/Mail/GetMailInfoWithResend?mail_id=${id}&Department_Id=${department}&type=${type}`);
+        //  return axios.get(`http://mail:82/api/WeatherForecast/GetMailInfo?mail_id=${id}&Department_Id=${department}&type=${type}`);
+    },
+
+    
+
+    GetAllDocuments(id, userId,department_id) {
+        return axios.get(`/api/Resources/GetMailResources?mail_id=${id}&userId=${userId}&department_id=${department_id}`);
+        //  return axios.get(`http://mail:82/api/Resources/GetMailResources?mail_id=${id}&userId=${userId}`);
+    },
+    
+
+    GetAllDocuments_sec(id, userId,department_id) {
+        return axios.get(`/api/Resources/GetMailResourcesSection?mail_id=${id}&userId=${userId}&department_id=${department_id}`);
         //  return axios.get(`http://mail:82/api/Resources/GetMailResources?mail_id=${id}&userId=${userId}`);
     },
 
@@ -154,13 +216,13 @@ export default {
     //      return axios.post(`/api/Mail/Uplode`, { userId: 9, mail_id: Number(id), list: list, })
     //  return axios.post(`http://mail:82/api/Mail/Uplode`, { userId: 9, mail_id: Number(id), list: list, })
     UploadImagesMail(id, list, userId) {
-        return axios.post(`/api/Mail/Uplode`, { userId: userId, mail_id: Number(id), list: list, })
+        return axios.post(`/api/Mail/Uplode`, { userId: userId, mail_id: Number(id), list: list,})
             // return axios.post(`http://mail:82/api/Mail/Uplode`, { userId: userId, mail_id: Number(id), list: list, })
 
     },
 
-    DeleteAllDocuments(id, userId) {
-        return axios.delete(`/api/Resources/delete_all_image?id=${id}&userId=${userId}`)
+    DeleteAllDocuments(id, userId,department_id) {
+        return axios.delete(`/api/Resources/delete_all_image?id=${id}&userId=${userId}&departmentid=${department_id}`)
             //   return axios.delete(`http://mail:82/api/Mail/DeleteDocument?id=${id}&userId=${userId}`)
     },
 
@@ -223,14 +285,31 @@ export default {
         //   return axios.get(`http://mail:82/api/Role/GetAll`);
     },
 
-    GetUsersOfDepartment(id) {
+    GetUsersOfBranchDepartment(id) {
         return axios.get(`/api/Administrator/GetByDepartmentId?department=${id}`);
         //   return axios.get(`http://mail:82/api/Administrator/GetByDepartmentId?department=${id}`);
     },
 
+    
+    GetUsersOfDepartment(id) {
+        return axios.get(`/api/Administrator/GetByDepartmentId?department=${id}`);
+        //   return axios.get(`http://mail:82/api/Administrator/GetByDepartmentId?department=${id}`);
+    },
+    
+
+
     GetUsersOfDepartmentControl(id) {
         return axios.get(`/api/Administrator/GetByDepartmentIdControl?department=${id}`);
         //   return axios.get(`http://mail:82/api/Administrator/GetByDepartmentIdControl?department=${id}`);
+    },
+
+    StopPublicAdministrations(stop_PublicAdministrations) {
+        return axios.put(`/api/Department/change_state?StopActive=${stop_PublicAdministrations}`)
+      //  return axios.put(`http://mail:82/api/Administrator/Delete/`, StopActive)
+     },
+
+    GetBranchOfDepartment(id){
+        return axios.get(`/api/Administrator/GetBranchByDepartmentId?departmentid=${id}`);
     },
 
     GetAllDocuments2(id) {

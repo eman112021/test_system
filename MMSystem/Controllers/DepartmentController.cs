@@ -46,6 +46,53 @@ namespace MMSystem.Controllers
         }
 
         [HttpGet]
+        [Route("GetDepartmentandSections")]
+        public async Task<List<Department>> GetDepartmentandSections(int dep)
+        {
+            var dep1 = await _data.GetDepartmentandSections(dep);
+
+          if(dep1 != null)
+            {
+                return dep1;
+            }
+            else
+            {
+                return null;
+            }
+              
+           
+           
+        }
+
+        [HttpGet("GetAllDepartmentAndMysections")]
+        public async Task<IActionResult> GetAllDepartmentAndMysections(int dep)
+        {
+            try
+            {
+
+                var c = await _data.GetAllDepartmentAndMysections(dep);
+
+                if (c != null)
+                {
+                    return Ok(c);
+                }
+                else {
+
+                    return NotFound(new Result() { message = "الادارة غير موجود", statusCode = 404 });
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+         
+
+
+        }
+
+        [HttpGet]
         [Route("Getsub")]
 
         public async Task<IActionResult> Gettsub(int par)

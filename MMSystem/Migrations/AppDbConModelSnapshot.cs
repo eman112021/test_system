@@ -161,21 +161,21 @@ namespace MMSystem.Migrations
                         {
                             Id = 5,
                             DepartmentName = "الادارة العامة للرقابة علي رئاسة الوزراء",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 8,
                             DepartmentName = "مكتب مستشاري رئيس الهيئة",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 13,
                             DepartmentName = "مكتب المراجعة  الداخلية",
-                            perent = 10,
+                            perent = 0,
                             state = true
                         },
                         new
@@ -189,28 +189,28 @@ namespace MMSystem.Migrations
                         {
                             Id = 16,
                             DepartmentName = "مكتب التخطيط",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 17,
                             DepartmentName = "مكتب التوثيق وتقنية المعلومات",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 19,
                             DepartmentName = "مكتب المحفوظات ",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 20,
                             DepartmentName = "مكتب الشؤون القانونية ودراسة التشريعات",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
@@ -224,7 +224,7 @@ namespace MMSystem.Migrations
                         {
                             Id = 22,
                             DepartmentName = "مكتب وكيل الهيئة",
-                            perent = 21,
+                            perent = 0,
                             state = true
                         },
                         new
@@ -245,84 +245,84 @@ namespace MMSystem.Migrations
                         {
                             Id = 28,
                             DepartmentName = "لجنة صندوق العاملين",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 32,
                             DepartmentName = "مكتب التعاون الدولي والتواصل",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 34,
                             DepartmentName = " وحدة الحماية الشخصية",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 35,
                             DepartmentName = "وحدة العلاقات الخاصة بمكتب الرئيس",
-                            perent = 1,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 36,
                             DepartmentName = "مكتب التحري والمعلومات",
-                            perent = 10,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 38,
                             DepartmentName = "الإدارة العامة للرقابة علي القطاعات الخدمية والأمنية",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 39,
                             DepartmentName = "الإدارة العامة للرقابة علي القطاعات الإنتاجية والبنية الأساسية",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 40,
                             DepartmentName = "الإدارة العامة للرقابة علي القطاعات الاقتصادية والاستثمار",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 41,
                             DepartmentName = "الإدارةالعامة للموارد البشرية",
-                            perent = 21,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 42,
                             DepartmentName = "الإدارةالعامة للشؤون الإدارية والخدمات",
-                            perent = 21,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 43,
                             DepartmentName = "الإدارةالعامة للشؤون المالية",
-                            perent = 21,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 44,
                             DepartmentName = "لجنة الموقع",
-                            perent = 10,
+                            perent = 0,
                             state = true
                         },
                         new
@@ -336,21 +336,21 @@ namespace MMSystem.Migrations
                         {
                             Id = 50,
                             DepartmentName = "فرع غرب طرابلس",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 51,
                             DepartmentName = "فرع مصراته",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
                         {
                             Id = 52,
                             DepartmentName = "فرع ترهونة",
-                            perent = 14,
+                            perent = 0,
                             state = true
                         },
                         new
@@ -379,6 +379,20 @@ namespace MMSystem.Migrations
                             Id = 56,
                             DepartmentName = "فرع شرق طرابلس",
                             perent = 0,
+                            state = true
+                        },
+                        new
+                        {
+                            Id = 90,
+                            DepartmentName = "قسم البرمجة  ",
+                            perent = 17,
+                            state = true
+                        },
+                        new
+                        {
+                            Id = 91,
+                            DepartmentName = "قسم الشبكات",
+                            perent = 17,
                             state = true
                         });
                 });
@@ -687,6 +701,21 @@ namespace MMSystem.Migrations
                         {
                             ID = 25,
                             name = "ملاحظات  في المحفوظات "
+                        },
+                        new
+                        {
+                            ID = 26,
+                            name = "حفظ اعادة توجيه البريد"
+                        },
+                        new
+                        {
+                            ID = 27,
+                            name = "تعديل اعادة توجيه البريد "
+                        },
+                        new
+                        {
+                            ID = 28,
+                            name = "ارسال اعادة توجيه البريد "
                         });
                 });
 
@@ -862,6 +891,9 @@ namespace MMSystem.Migrations
                     b.Property<bool>("State")
                         .HasColumnType("bit");
 
+                    b.Property<int>("fromWho")
+                        .HasColumnType("int");
+
                     b.Property<int>("order")
                         .HasColumnType("int");
 
@@ -1008,6 +1040,9 @@ namespace MMSystem.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("ReplyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReplyId2")
                         .HasColumnType("int");
 
                     b.Property<bool>("State")
@@ -1266,6 +1301,29 @@ namespace MMSystem.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MMSystem.Model.Section_Notes", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("State")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("send_ToId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("send_ToId");
+
+                    b.ToTable("section_Notes");
+                });
+
             modelBuilder.Entity("MMSystem.Model.Send_to", b =>
                 {
                     b.Property<int>("Id")
@@ -1287,6 +1345,12 @@ namespace MMSystem.Migrations
 
                     b.Property<bool>("isMulti")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("resended")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("resendfrom")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("time_of_read")
                         .HasColumnType("datetime2");
@@ -1450,6 +1514,17 @@ namespace MMSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Reply");
+                });
+
+            modelBuilder.Entity("MMSystem.Model.Section_Notes", b =>
+                {
+                    b.HasOne("MMSystem.Model.Send_to", "send_To")
+                        .WithMany()
+                        .HasForeignKey("send_ToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("send_To");
                 });
 
             modelBuilder.Entity("MMSystem.Model.Send_to", b =>

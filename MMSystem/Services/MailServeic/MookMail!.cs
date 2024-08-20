@@ -461,7 +461,9 @@ namespace MMSystem.Services.MailServeic
                     case 1:
                         Mail mail = await _appContext.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 1 && x.state == true);
                         dto1 = _mapper.Map<Mail, MailDto>(mail);
-            
+                        var dd = await _appContext.clasifications.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.Id == dto1.clasification);
+                        dto1.classification_name = dd.Name;
+
 
 
 
@@ -469,11 +471,16 @@ namespace MMSystem.Services.MailServeic
                     case 2:
                         Mail mail1 = await _appContext.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 2 && x.state == true);
                         dto1 = _mapper.Map<Mail, MailDto>(mail1);
+                           dd = await _appContext.clasifications.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.Id == dto1.clasification);
+                        dto1.classification_name = dd.Name;
 
                         break;
                     case 3:
                         Mail mail2 = await _appContext.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 3 && x.state == true);
                         dto1 = _mapper.Map<Mail, MailDto>(mail2);
+                           dd = await _appContext.clasifications.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.Id == dto1.clasification);
+                        dto1.classification_name = dd.Name;
+
                         break;
                     default: break;
 
@@ -1353,7 +1360,380 @@ namespace MMSystem.Services.MailServeic
         }
 
 
+        public async Task<MVM> GetMailAndResendList(int mail_id, int department_Id, int tybe)
+        {
+            try
+            {
 
+                MVM model = new MVM();
+                List<Mail_Resourcescs> mail_Resourcescs = new List<Mail_Resourcescs>();
+
+
+                model.mail = await Getdto(mail_id, tybe);
+
+                Department dpart = await _appContext.Departments.FindAsync(department_Id);
+
+                if (dpart.perent != 0)
+                {
+                    mail_Resourcescs = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true ).ToListAsync();
+                }
+                else {
+                    mail_Resourcescs = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true && x.fromWho == model.mail.department_Id ).ToListAsync();
+                }
+                List<Send_to> c = await _appContext.Sends.Where(x => (x.to == department_Id || x.resendfrom == department_Id) && x.MailID == mail_id ).ToListAsync();
+               
+                if (c.Count() != 0)
+                {
+                    var is_resended = c.Where(x => x.MailID == mail_id && x.to == department_Id && x.State == true).ToList();
+
+                    if (is_resended.Count() != 0)
+                        model.is_resended = is_resended[0].resended;
+
+                       model.mail_Resourcescs = _mapper.Map<List<Mail_Resourcescs>, List<Mail_ResourcescsDto>>(mail_Resourcescs);
+                    
+                        var resended_from = c.FirstOrDefault(x => x.MailID == mail_id && x.to == department_Id && x.State == true);
+                    if (resended_from != null)
+                        model.resended_from = resended_from.resendfrom;
+
+                    foreach (var item in c)
+                    {
+
+                      
+
+                        List<section_NotesDto> section_N = await (from x in _appContext.section_Notes.Where(x => x.send_ToId == item.Id && x.State == true)
+                                                                  join y in _appContext.Sends on x.send_ToId equals y.Id
+                                                                  join z in _appContext.Departments.Where(x => x.perent == department_Id) on y.to equals z.Id
+                                                                  select new section_NotesDto
+                                                                  {
+                                                                      ID = x.ID,
+                                                                      department_id = z.Id,
+                                                                      department_name = z.DepartmentName,
+                                                                      sends_state = y.State,
+                                                                      Note = x.Note,
+                                                                      send_ToId = x.send_ToId,
+                                                                      State = x.State
+                                                                  }
+                               
+                                                                  ).ToListAsync();
+                        
+                        model.section_Notes.AddRange(section_N);
+
+                        List<Mail_Resourcescs> mail_Resources_resended = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true && x.fromWho == department_Id).ToListAsync();
+
+                        model.mail_Resources_resended = _mapper.Map<List<Mail_Resourcescs>, List<Mail_ResourcescsDto>>(mail_Resources_resended);
+
+                    }
+
+
+                   if (dpart.perent != 0) {
+
+                    var h = await _appContext.section_Notes.Where(x => x.send_ToId == c[0].Id).ToListAsync();
+                   
+                     if( h.Count!=0)                
+                     model.mail.Action_Required =h[0].Note;
+                    
+                    }
+
+                }
+
+                //foreach (var xx in model.mail_Resourcescs)
+                //{
+                //    string x = xx.path;
+                //    if (File.Exists(x))
+                //    {
+                //        xx.path = await tobase64(x);
+
+                //    }
+
+                //}
+
+                //foreach (var item in model.list)
+                //{
+                //    foreach (var item2 in item.Resources)
+                //    {
+                //        string x = item2.path;
+                //        if (File.Exists(x))
+                //        {
+                //            item2.path = await tobase64(x);
+
+                //        }
+
+                //    }
+                //}
+                
+                return model;
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        public async Task<List<RViewModel>> GetRepliesList(int SendsToId)
+        {
+            try
+            {
+
+        
+            List<RViewModel> list = new List<RViewModel>();
+
+            List<RViewModel> replies = await (from x in _appContext.Replies.Where(x => x.send_ToId == SendsToId && x.state.Equals(true) && x.IsSend.Equals(true))
+                                                  //       join y in _dbCon.Reply_Resources on x.ReplyId equals y.ReplyId
+                                              select new RViewModel
+                                              {
+                                                  reply = _mapper.Map<Reply, ReplayDto>(x),
+                                                  Resources = x._Resources.Where(a => a.State == true && x.ReplyId == x.ReplyId).Any()
+                                              }).ToListAsync();
+            if (replies.Count() != 0)
+                list.AddRange(replies);
+
+            return list;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<EIMVM> GetExternalbox(int mail_id, int Depa, int type)
+        {
+            try
+            {
+
+                EIMVM model = new EIMVM();
+                bool dep = false;
+                if (Depa == 21)
+                {
+
+                    dep = true;
+                }
+                //   Mail mail = await _dbCon.Mails.FindAsync(mail_id);
+                model.mail = await Getdto(mail_id, type);
+                Extrenal_inbox external_Mail = await _appContext.Extrenal_Inboxes.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.MailID == mail_id);
+                //  model.side = await _dbCon.Extrmal_Sections.FindAsync(external_Mail.SectionId);
+                // model.Sector = await _dbCon.Extrmal_Sections.FirstOrDefaultAsync(x => x.id == model.side.perent);
+
+
+
+                model.external_sectoin = await _appContext.external_Departments.Where(x => x.Mail_id == model.mail.MailID && x.state == true).Select(z => new Ex_Departments
+                {
+
+                    side_name = _appContext.Extrmal_Sections.FirstOrDefault(v => v.id == z.side_number).Section_Name,
+                    side_number = z.side_number,
+                    id = z.id,
+                    Mail_id = z.Mail_id,
+                    sector_name = _appContext.Extrmal_Sections.FirstOrDefault(v => v.id == z.sector_number).Section_Name,
+                    sector_number = z.sector_number,
+                    mail_forwarding = z.mail_forwarding
+
+
+                })
+                        .ToListAsync();
+
+                model.Inbox = _mapper.Map<Extrenal_inbox, Extrenal_inboxDto>(external_Mail);
+                List<Mail_Resourcescs> mail_Resourcescs = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true).ToListAsync();
+                // Send_to c = await _dbCon.Sends.Where(x =>  x.MailID == mail_id&&(dep == true||dep== false&&x.to == Depa )).FirstOrDefaultAsync();
+                // Send_to c = await _dbCon.Sends.Where(x => x.MailID == mail_id && ((dep == true || dep == false) && x.to == Depa)).FirstOrDefaultAsync();
+                Send_to c = await _appContext.Sends.Where(x => x.MailID == mail_id && x.State == true && ((dep == true || dep == false) && x.to == Depa)).FirstOrDefaultAsync();
+
+
+                model.mail_Resourcescs = _mapper.Map<List<Mail_Resourcescs>, List<Mail_ResourcescsDto>>(mail_Resourcescs);
+                model.list = await (from x in _appContext.Replies.Where(x => x.send_ToId == c.Id && x.state.Equals(true) && x.IsSend.Equals(true))
+                                        //  join y in _dbCon.Reply_Resources.Where(x=>x.ReplyId==x.ID)
+                                    select new RViewModel
+                                    {
+                                        reply = _mapper.Map<Reply, ReplayDto>(x),
+                                        Resources = x._Resources.Where(a => a.State == true && x.ReplyId == x.ReplyId).Any()
+                                    }).ToListAsync();
+
+
+                //foreach (var xx in model.mail_Resourcescs)
+                //{
+                //    string x = xx.path;
+                //    if (File.Exists(x))
+                //    {
+                //        xx.path = await tobase64(x);
+
+                //    }
+
+                //}
+
+                //foreach (var item in model.list)
+                //{
+                //    foreach (var item2 in item.Resources)
+                //    {
+                //        string x1 = item2.path;
+                //        if (File.Exists(x1))
+                //        {
+                //            item2.path = await tobase64(x1);
+
+                //        }
+
+
+                //    }
+                //}
+
+
+                return model;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<ExInboxModel> GetExternalboxAndResended(int mail_id, int Depa, int type)
+        {
+            try
+            {
+
+                ExInboxModel model = new ExInboxModel();
+                List<Mail_Resourcescs> mail_Resourcescs = new List<Mail_Resourcescs>();
+                bool dep = false;
+                if (Depa == 21)
+                {
+
+                    dep = true;
+                }
+                //   Mail mail = await _dbCon.Mails.FindAsync(mail_id);
+                model.mail = await Getdto(mail_id, type);
+
+                Department dpart = await _appContext.Departments.FindAsync(Depa);
+
+                Extrenal_inbox external_Mail = await _appContext.Extrenal_Inboxes.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.MailID == mail_id);
+                //  model.side = await _dbCon.Extrmal_Sections.FindAsync(external_Mail.SectionId);
+                // model.Sector = await _dbCon.Extrmal_Sections.FirstOrDefaultAsync(x => x.id == model.side.perent);
+
+
+
+                model.external_sectoin = await _appContext.external_Departments.Where(x => x.Mail_id == model.mail.MailID && x.state == true).Select(z => new Ex_Departments
+                {
+
+                    side_name = _appContext.Extrmal_Sections.FirstOrDefault(v => v.id == z.side_number).Section_Name,
+                    side_number = z.side_number,
+                    id = z.id,
+                    Mail_id = z.Mail_id,
+                    sector_name = _appContext.Extrmal_Sections.FirstOrDefault(v => v.id == z.sector_number).Section_Name,
+                    sector_number = z.sector_number,
+                    mail_forwarding = z.mail_forwarding
+
+
+                })
+                        .ToListAsync();
+
+                model.Inbox = _mapper.Map<Extrenal_inbox, Extrenal_inboxDto>(external_Mail);
+
+
+                if (dpart.perent != 0)
+                {
+                    mail_Resourcescs = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true ).ToListAsync();
+                }
+                else
+                {
+                    mail_Resourcescs = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true && x.fromWho == model.mail.department_Id).ToListAsync();
+                }          // Send_to c = await _dbCon.Sends.Where(x =>  x.MailID == mail_id&&(dep == true||dep== false&&x.to == Depa )).FirstOrDefaultAsync();
+                // Send_to c = await _dbCon.Sends.Where(x => x.MailID == mail_id && ((dep == true || dep == false) && x.to == Depa)).FirstOrDefaultAsync();
+                List<Send_to> c = await _appContext.Sends.Where(x => (x.to == Depa || x.resendfrom == Depa) && x.MailID == mail_id  && ((dep == true || dep == false))).ToListAsync();
+                if (c.Count != 0)
+                {
+                    var is_resended = c.Where(x => x.MailID == mail_id && x.to == Depa && x.State == true).ToList();
+
+                model.is_resended = is_resended[0].resended;
+
+
+                model.mail_Resourcescs = _mapper.Map<List<Mail_Resourcescs>, List<Mail_ResourcescsDto>>(mail_Resourcescs);
+
+                    foreach (var item in c)
+                    {
+
+                        List<ReplayModel> replies = await (from x in _appContext.Replies.Where(x => x.send_ToId == item.Id && x.state.Equals(true) && x.IsSend.Equals(true))
+                                                               //  join y in _dbCon.Reply_Resources.Where(x=>x.ReplyId==x.ID)
+                                                           select new ReplayModel
+                                                           {
+                                                               DepRepaly = item.to.ToString(),
+                                                               reply = _mapper.Map<Reply, ReplayDto>(x),
+                                                               Resources = x._Resources.Where(a => a.State == true && x.ReplyId == x.ReplyId).Any()
+                                                           }).ToListAsync();
+                        if (replies.Count() != 0)
+                        { 
+                    model.list.AddRange(replies);
+                        }
+                        List<section_NotesDto> section_N = await (from x in _appContext.section_Notes.Where(x => x.send_ToId == item.Id && x.State == true)
+                                                              join y in _appContext.Sends on x.send_ToId equals y.Id
+                                                              join z in _appContext.Departments.Where(x => x.perent == Depa) on y.to equals z.Id
+                                                              select new section_NotesDto
+                                                              {
+                                                                  ID = x.ID,
+                                                                  department_id = z.Id,
+                                                                  department_name = z.DepartmentName,
+                                                                  sends_state = y.State,
+                                                                  Note = x.Note,
+                                                                  send_ToId = x.send_ToId,
+                                                                  State = x.State
+                                                              }
+                                                           ).ToListAsync();
+
+                    model.section_Notes.AddRange(section_N);
+
+                    List<Mail_Resourcescs> mail_Resources_resended = await _appContext.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State == true && x.fromWho == Depa).ToListAsync();
+
+                    model.mail_Resources_resended = _mapper.Map<List<Mail_Resourcescs>, List<Mail_ResourcescsDto>>(mail_Resources_resended);
+
+                }
+                    if (dpart.perent != 0)
+                    {
+
+                        var h = await _appContext.section_Notes.Where(x => x.send_ToId == c[0].Id).ToListAsync();
+
+                        model.mail.Action_Required = h[0].Note;
+                    }
+
+                }
+                //foreach (var xx in model.mail_Resourcescs)
+                //{
+                //    string x = xx.path;
+                //    if (File.Exists(x))
+                //    {
+                //        xx.path = await tobase64(x);
+
+                //    }
+
+                //}
+
+                //foreach (var item in model.list)
+                //{
+                //    foreach (var item2 in item.Resources)
+                //    {
+                //        string x1 = item2.path;
+                //        if (File.Exists(x1))
+                //        {
+                //            item2.path = await tobase64(x1);
+
+                //        }
+
+
+                //    }
+                //}
+
+
+                return model;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         //public async Task<List<MailDto>> getExternalMail(int id)
         //{
         //    try
@@ -1467,6 +1847,8 @@ namespace MMSystem.Services.MailServeic
                     mail.MailID = file.mail_id;
                     mail.path = path + extention;
                     mail.order = item.index;
+                    mail.fromWho = item.department_id;
+                
                    
                  
                     bool res = await _resourcescs.Add(mail);
@@ -1528,7 +1910,7 @@ namespace MMSystem.Services.MailServeic
                             mail.departments = await _appContext.Departments.ToListAsync();
                             foreach (var item in mail.actionSenders)
                             {
-                                mail.departments.RemoveAll(x => x.Id == item.departmentId);
+                                mail.departments.RemoveAll(x => x.Id == item.departmentId );
                             }
 
 
@@ -1650,7 +2032,7 @@ namespace MMSystem.Services.MailServeic
                 {
 
                     mail.mail = dto;
-                    List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == mail.mail.MailID&&x.State==true).ToListAsync();
+                    List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == mail.mail.MailID&&x.State==true && x.resendfrom ==0).ToListAsync();
                     if (sends.Count > 0) {
                         foreach (var item in sends)
                         {
@@ -1758,7 +2140,7 @@ namespace MMSystem.Services.MailServeic
 
                         );
                     }
-                    mail.resourcescs = await _resourcescs.GetAll(mail.mail.MailID);
+                    mail.resourcescs = await _resourcescs.GetAll(mail.mail.MailID,mail.mail.department_Id);
 
 
                     foreach (var xx in mail.resourcescs)
@@ -1983,7 +2365,7 @@ namespace MMSystem.Services.MailServeic
                     //ex.sector.Add(sector);
 
 
-                    List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == id&&x.State==true).ToListAsync();
+                    List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == id&&x.State==true && x.resendfrom == 0).ToListAsync();
 
 
                     if (sends.Count > 0) {
@@ -2146,6 +2528,8 @@ namespace MMSystem.Services.MailServeic
 
         }
 
+      
+
         public async Task<List<MailStatus>> GetMailStatuses()
         {
             try
@@ -2172,7 +2556,7 @@ namespace MMSystem.Services.MailServeic
 
 
                 var c = await (from mail in _appContext.Mails.Where(x => x.MailID == mail_id && x.state == true)
-                               join send in _appContext.Sends.Where(x => x.State == true) on mail.MailID equals send.MailID
+                               join send in _appContext.Sends.Where(x => x.State == true && x.resendfrom == 0) on mail.MailID equals send.MailID
                                join department in _appContext.Departments on send.to equals department.Id
                                join measures in _appContext.measures on send.type_of_send equals measures.MeasuresId
                                join mailState in _appContext.MailStatuses on send.flag equals mailState.flag
@@ -2214,6 +2598,86 @@ namespace MMSystem.Services.MailServeic
 
         }
 
+        public async Task<List<SendsDetalies>> GetDetaliesInIncomingMails(int mail_id,int department_id)
+        {
+            try
+            {
+
+                var d= await (from mail in _appContext.Mails.Where(x => x.MailID == mail_id && x.state == true )
+                               join send in _appContext.Sends.Where(x => x.resendfrom == department_id ) on mail.MailID equals send.MailID
+                              join sectionnot in _appContext.section_Notes.Where(x => x.State == true) on send.Id equals sectionnot.send_ToId
+                              join department in _appContext.Departments on send.to equals department.Id
+                            //   join measures in _appContext.measures on send.type_of_send equals measures.MeasuresId
+                               join mailState in _appContext.MailStatuses on send.flag equals mailState.flag
+                              
+  
+                               select new SendsDetalies()
+                               {
+                                   Department_id = send.to,
+                                   Department_name = department.DepartmentName,
+                                   flag = mailState.flag,
+                                  // MesureName = measures.MeasuresName,
+                                   State = mailState.sent,
+                                   send_ToId = send.Id,
+
+                                   date = (send.Send_time.ToString().StartsWith("0001")) ? "لم يتم الارسال" : send.Send_time.ToString("yyyy-MM-dd"),
+                                   date_read = (send.time_of_read.ToString().StartsWith("0001")) ? "لم يتم الرد" : send.time_of_read.ToString("yyyy-MM-dd"),
+                                   time_of_read = (send.time_of_read.ToString().EndsWith("0000000")) ? "لم يتم الرد" : send.time_of_read.ToString("hh:mm:ss"),
+                                   time_of_send = (send.Send_time.ToString().EndsWith("0000000")) ? "لم يتم الارسال" : send.Send_time.ToString("hh:mm:ss")
+                               }).ToListAsync();
+
+                
+             
+                var c =  await (from mail in _appContext.Mails.Where(x => x.MailID == mail_id && x.state == true)
+                       join send in _appContext.Sends.Where(x => x.State == true && x.to == department_id) on mail.MailID equals send.MailID
+                       join department in _appContext.Departments on mail.Department_Id equals department.Id
+                       join measures in _appContext.measures on send.type_of_send equals measures.MeasuresId
+                       join mailState in _appContext.MailStatuses on send.flag equals mailState.flag
+                 
+
+
+                             // send.resendfrom == 0 ? department.DepartmentName : department.Id.Equals(send.resendfrom).ToString()
+                             //   
+                             select new SendsDetalies()
+                       {
+                           sends_from = send.resendfrom,
+                           Department_id = send.resendfrom == 0 ? mail.Department_Id : send.resendfrom,
+                           Department_name = department.DepartmentName  ,
+                           flag = mailState.flag,
+                           MesureName = measures.MeasuresName,
+                           State = mailState.inbox,
+                           send_ToId = send.Id,
+
+                           date = (send.Send_time.ToString().StartsWith("0001")) ? "لم يتم الارسال" : send.Send_time.ToString("yyyy-MM-dd"),
+                           date_read = (send.time_of_read.ToString().StartsWith("0001")) ? "لم يتم الرد" : send.time_of_read.ToString("yyyy-MM-dd"),
+                           time_of_read = (send.time_of_read.ToString().EndsWith("0000000")) ? "لم يتم الرد" : send.time_of_read.ToString("hh:mm:ss"),
+                           time_of_send = (send.Send_time.ToString().EndsWith("0000000")) ? "لم يتم الارسال" : send.Send_time.ToString("hh:mm:ss")
+                       }).ToListAsync();
+
+                if (c[0].sends_from != 0)
+                {
+                    Department department1 = await _appContext.Departments.FindAsync(c[0].Department_id);
+
+                c[0].Department_name = department1.DepartmentName;
+                }
+
+
+
+                c.AddRange(d);
+
+
+
+                return c;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         public async Task<dynamic> search(int id, int type, int year, int departmentId)
         {
             try
@@ -2228,7 +2692,7 @@ namespace MMSystem.Services.MailServeic
                         if (dto != null) {
 
                             mail.mail = dto;
-                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == mail.mail.MailID&&x.State==true).ToListAsync();
+                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == mail.mail.MailID && x.State==true && x.resendfrom==0).ToListAsync();
 
                             if (sends.Count > 0) {
 
@@ -2258,7 +2722,7 @@ namespace MMSystem.Services.MailServeic
                             ActionSender sender = new ActionSender();
                            
 
-                            mail.resourcescs = await _resourcescs.GetAll(mail.mail.MailID);
+                            mail.resourcescs = await _resourcescs.GetAll(mail.mail.MailID,mail.mail.department_Id);
 
 
                             foreach (var xx in mail.resourcescs)
@@ -2320,7 +2784,7 @@ namespace MMSystem.Services.MailServeic
 
 
 
-                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == ex.mail.MailID&&x.State==true).ToListAsync();
+                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == ex.mail.MailID&&x.State==true && x.resendfrom ==0).ToListAsync();
 
                             if (sends.Count > 0) {
 
@@ -2348,7 +2812,7 @@ namespace MMSystem.Services.MailServeic
 
                             }
 
-                            ex.resourcescs = await _resourcescs.GetAll(dto.MailID);
+                            ex.resourcescs = await _resourcescs.GetAll(dto.MailID,dto.department_Id);
 
 
                             foreach (var xx in ex.resourcescs)
@@ -2410,7 +2874,7 @@ namespace MMSystem.Services.MailServeic
                                                       .ToListAsync();
 
 
-                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == dto.MailID && x.State == true).ToListAsync();
+                            List<Send_to> sends = await _appContext.Sends.Where(x => x.MailID == dto.MailID && x.State == true && x.resendfrom == 0).ToListAsync();
 
 
 
@@ -2443,7 +2907,7 @@ namespace MMSystem.Services.MailServeic
 
                             //
 
-                            ex1.resourcescs = await _resourcescs.GetAll(dto.MailID);
+                            ex1.resourcescs = await _resourcescs.GetAll(dto.MailID,dto.department_Id);
 
 
                             foreach (var xx in ex1.resourcescs)

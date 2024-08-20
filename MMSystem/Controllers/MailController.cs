@@ -24,7 +24,7 @@ namespace MMSystem.Controllers
     {
         private readonly IMailInterface _Imail;
         private readonly AppDbCon dbcon;
-
+        public dynamic obj;
         //   private IWebHostEnvironment iwebHostEnvironment;
 
         private readonly ISender _sender;
@@ -154,6 +154,7 @@ namespace MMSystem.Controllers
 
         }
 
+      
         [HttpPut("UpdateMail")]
         public async Task<IActionResult> UpdateMail(MailViewModel mail)
         {
@@ -261,7 +262,15 @@ namespace MMSystem.Controllers
             return NotFound("لايوجد بريد ");
         }
 
+        [HttpGet("GetDetaliesInIncomingMails")]
+        public async Task<IActionResult> GetDetaliesInIncomingMails(int mail_id, int department_id)
+        {
 
+            var c = await _Imail.GetDetaliesInIncomingMails(mail_id, department_id);
+            if (c.Count > 0)
+                return Ok(c);
+            return NotFound("لايوجد بريد ");
+        }
 
 
         [HttpPut("update_send")]
@@ -410,6 +419,42 @@ namespace MMSystem.Controllers
 
                 return BadRequest(new Result() { message = "حدث خطأ", statusCode = 400 });
             }
+        [HttpGet("GetMailInfoWithResend")]
+        public async Task<IActionResult> GetMailInfo(int mail_id, int Department_Id, int type)
+        {
+
+            switch (type)
+            {
+                case 1:
+                    var mail = await _Imail.GetMailAndResendList(mail_id, Department_Id, type);
+                    obj = mail;
+                    break;
+                case 2:
+                    var External = await _Imail.GetExternalbox(mail_id, Department_Id, type);
+                    obj = External;
+                    break;
+                case 3:
+                    var ExternalInbox = await _Imail.GetExternalboxAndResended(mail_id, Department_Id, type);
+                    obj = ExternalInbox;
+                    break;
+                default:
+                    break;
+            }
+
+
+            return Ok(obj);
+
+        }
+
+
+        [HttpGet("GetRepliesList")]
+        public async Task<IActionResult> GetRepliesList(int SendsToId)
+        {
+
+            List<RViewModel> list = await _Imail.GetRepliesList(SendsToId);
+            if (list.Count > 0)
+                return Ok(list);
+            return  BadRequest(new Result() { message = "لايوجد ردود للبريد", statusCode = 404 });
 
 
         }
@@ -442,4 +487,5 @@ namespace MMSystem.Controllers
 
         }
     }
+
 }

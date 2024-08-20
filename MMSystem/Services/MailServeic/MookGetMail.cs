@@ -103,10 +103,10 @@ namespace MMSystem.Services.MailServeic
                 MVM model = new MVM();
 
                 model.mail = await Getdto(mail_id, tybe);
-                 List<Mail_Resourcescs> mail_Resourcescs = await _dbCon.Mail_Resourcescs.Where(x => x.MailID == mail_id&&x.State==true).ToListAsync();
-                Send_to c =  await _dbCon.Sends.Where(x => x.to == department_Id && x.MailID == mail_id&&x.State==true).FirstOrDefaultAsync();
+                List<Mail_Resourcescs> mail_Resourcescs = await _dbCon.Mail_Resourcescs.Where(x => x.MailID == mail_id && x.State==true && x.fromWho == model.mail.department_Id).ToListAsync();
+                Send_to c =  await _dbCon.Sends.Where(x => x.to == department_Id  && x.MailID == mail_id&&x.State==true ).FirstOrDefaultAsync();
                 model.mail_Resourcescs = _mapper.Map<List<Mail_Resourcescs>,List<Mail_ResourcescsDto>>(mail_Resourcescs);
-              model.list = await (from x in _dbCon.Replies.Where(x => x.send_ToId == c.Id&&x.state.Equals(true)&&x.IsSend.Equals(true))
+                model.list = await (from x in _dbCon.Replies.Where(x => x.send_ToId == c.Id&&x.state.Equals(true)&&x.IsSend.Equals(true))
                       //       join y in _dbCon.Reply_Resources on x.ReplyId equals y.ReplyId
                                select new RViewModel { 
                                reply=_mapper.Map<Reply,ReplayDto>(x),
@@ -152,6 +152,8 @@ namespace MMSystem.Services.MailServeic
         }
 
 
+      
+
         public async Task<string> tobase64(string patj)
         {
 
@@ -185,7 +187,7 @@ namespace MMSystem.Services.MailServeic
                     case 1:
                         Mail mail = await _dbCon.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 1);
                         dto1 = _mapper.Map<Mail, MailDto>(mail);
-                        var dd=await  _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x=>x.Id==int .Parse(dto1.clasification));
+                        var dd=await  _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x=>x.Id==dto1.clasification);
                         dto1.classification_name = dd.Name;
                         
 
@@ -193,14 +195,14 @@ namespace MMSystem.Services.MailServeic
                     case 2:
                         Mail mail1 = await _dbCon.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 2);
                         dto1 = _mapper.Map<Mail, MailDto>(mail1);
-                        var clasification =await _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x => x.Id == int.Parse(dto1.clasification));
+                        var clasification =await _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x => x.Id == dto1.clasification);
                         dto1.classification_name = clasification.Name;
 
                         break;
                     case 3:
                         Mail mail2 = await _dbCon.Mails.FirstOrDefaultAsync(x => x.MailID == id && x.Mail_Type == 3);
                         dto1 = _mapper.Map<Mail, MailDto>(mail2);
-                        var clasificationx =await _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x => x.Id == int.Parse(dto1.clasification));
+                        var clasificationx =await _dbCon.clasifications.OrderBy(x=>x.Id).FirstOrDefaultAsync(x => x.Id == dto1.clasification);
                         dto1.classification_name = clasificationx.Name;
 
                         break;
@@ -268,6 +270,7 @@ namespace MMSystem.Services.MailServeic
                                        Resources = x._Resources.Where(a => a.State == true && x.ReplyId == x.ReplyId).Any()
                                    }).ToListAsync();
 
+
                 //foreach (var xx in model.mail_Resourcescs)
                 //{
                 //    string x = xx.path;
@@ -306,6 +309,8 @@ namespace MMSystem.Services.MailServeic
             }
         }
 
-       
+
+     
+
     }
 }

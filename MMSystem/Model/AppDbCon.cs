@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace MMSystem.Model
 {
-    public class AppDbCon:DbContext
+    public class AppDbCon : DbContext
     {
         public DbSet<Administrator> Administrator { get; set; }
-
         public DbSet<Department> Departments { get; set; }
         public DbSet<External_Mail> External_Mails { get; set; }
-       public DbSet<Extrenal_inbox> Extrenal_Inboxes { get; set; }
-       public DbSet<Mail> Mails { get; set; }
-       public DbSet<Mail_Resourcescs> Mail_Resourcescs { get; set; }
-      public DbSet<Reply> Replies { get; set; }
-       public DbSet<Reply_Resources> Reply_Resources { get; set; }
-       public DbSet<Send_to> Sends { get; set; }
-       public DbSet<Extrmal_Section> Extrmal_Sections { get; set; }
+        public DbSet<Extrenal_inbox> Extrenal_Inboxes { get; set; }
+        public DbSet<Mail> Mails { get; set; }
+        public DbSet<Mail_Resourcescs> Mail_Resourcescs { get; set; }
+        public DbSet<Reply> Replies { get; set; }
+        public DbSet<Reply_Resources> Reply_Resources { get; set; }
+        public DbSet<Send_to> Sends { get; set; }
+        public DbSet<Extrmal_Section> Extrmal_Sections { get; set; }
         public DbSet<ClasificationSubject> clasifications { get; set; }
         public DbSet<Measures> measures { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -27,18 +26,19 @@ namespace MMSystem.Model
         public DbSet<MailStatus> MailStatuses { get; set; }
         public DbSet<HistortyName> histortyNames { get; set; }
         public DbSet<External_Department> external_Departments { get; set; }
+        public DbSet<Section_Notes> section_Notes { get; set; }
 
 
 
-        public AppDbCon(DbContextOptions<AppDbCon>options):base(options)
+        public AppDbCon(DbContextOptions<AppDbCon> options) : base(options)
         {
 
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Measures>().HasData(
-              new Measures { MeasuresId=1,   MeasuresName="للعلم",state=true},
+              new Measures { MeasuresId = 1, MeasuresName = "للعلم", state = true },
               new Measures { MeasuresId = 2, MeasuresName = "للرأي", state = true },
               new Measures { MeasuresId = 3, MeasuresName = "للاجراء", state = true },
               new Measures { MeasuresId = 4, MeasuresName = "للدراسة", state = true },
@@ -50,8 +50,8 @@ namespace MMSystem.Model
               new Measures { MeasuresId = 10, MeasuresName = "لامانع", state = true },
             new Measures { MeasuresId = 11, MeasuresName = "للاهتمام", state = true });
             modelBuilder.Entity<ClasificationSubject>().HasData(
-                
-                new ClasificationSubject() {Id=1,Name="شكوى" ,state=true},
+
+                new ClasificationSubject() { Id = 1, Name = "شكوى", state = true },
                 new ClasificationSubject() { Id = 2, Name = "مقال صحفي", state = true },
                 new ClasificationSubject() { Id = 3, Name = "ادارية", state = true },
                 new ClasificationSubject() { Id = 4, Name = "قرارات", state = true },
@@ -63,8 +63,8 @@ namespace MMSystem.Model
 
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, Name = "الصادر", state = true, code = "a" },
-                new Role { RoleId=2,Name="اضافة بريد جديد", state=true, code = "b" },
-                new Role { RoleId = 3, Name = "اضافة بريد داخلي", state = true,code="c" },
+                new Role { RoleId = 2, Name = "اضافة بريد جديد", state = true, code = "b" },
+                new Role { RoleId = 3, Name = "اضافة بريد داخلي", state = true, code = "c" },
                 new Role { RoleId = 4, Name = "اضافة بريد وارد خارجي", state = true, code = "d" },
                 new Role { RoleId = 5, Name = "اضافة بريد صادر خارجي", state = true, code = "e" },
                 new Role { RoleId = 6, Name = " الرد علي الصادر", state = true, code = "f" },
@@ -106,58 +106,60 @@ namespace MMSystem.Model
 
             modelBuilder.Entity<Department>().HasData
                 (
-                
-                new Department { Id=  1,  DepartmentName = "الادارة العامة للتحقيق ",perent=0,state=true},
-                new Department { Id = 2,  DepartmentName = "لجنة الحضور والانصراف", perent =0, state = true },
+
+                new Department { Id = 1, DepartmentName = "الادارة العامة للتحقيق ", perent = 0, state = true },
+                new Department { Id = 2, DepartmentName = "لجنة الحضور والانصراف", perent = 0, state = true },
                 //new Department { Id = 3,  DepartmentName = "الادارة العامة للشؤون الادارية والمالية ", perent =1, state = true },
                 //new Department { Id = 4,  DepartmentName = "الادارة العامة للرقابة علي الشركات والمشروعات", perent =1, state = true },
 
-                new Department { Id = 5,  DepartmentName = "الادارة العامة للرقابة علي رئاسة الوزراء", perent =1, state = true },
+                new Department { Id = 5, DepartmentName = "الادارة العامة للرقابة علي رئاسة الوزراء", perent = 0, state = true },
                 //new Department { Id = 6,  DepartmentName = "الادارة العامة للرقابة علي المؤسسات العامة", perent =1, state = true },
-                new Department { Id = 8,  DepartmentName = "مكتب مستشاري رئيس الهيئة", perent =1, state = true },
+                new Department { Id = 8, DepartmentName = "مكتب مستشاري رئيس الهيئة", perent = 0, state = true },
                 //new Department { Id = 10, DepartmentName = "الادارة العامة للرقابة علي المصارف", perent =0, state = true },
-                new Department { Id = 13, DepartmentName = "مكتب المراجعة  الداخلية", perent =10, state = true },
-                new Department { Id = 14, DepartmentName = "مكتب التفتيش وتقييم الاداء ", perent =0, state = true },
+                new Department { Id = 13, DepartmentName = "مكتب المراجعة  الداخلية", perent =0, state = true },
+                new Department { Id = 14, DepartmentName = "مكتب التفتيش وتقييم الاداء ", perent = 0, state = true },
                 //new Department { Id = 15, DepartmentName = "مكتب الرعاية الصحية", perent =14, state = true },
-                new Department { Id = 16, DepartmentName = "مكتب التخطيط", perent =14, state = true },
-                new Department { Id = 17, DepartmentName = "مكتب التوثيق وتقنية المعلومات", perent =14, state = true },
+                new Department { Id = 16, DepartmentName = "مكتب التخطيط", perent = 0, state = true },
+                new Department { Id = 17, DepartmentName = "مكتب التوثيق وتقنية المعلومات", perent = 0, state = true },
                 //new Department { Id = 18, DepartmentName = "مكتب متابعة الرقم الوطني", perent =14, state = true },
-                new Department { Id = 19, DepartmentName = "مكتب المحفوظات ", perent =14, state = true },
-                new Department { Id = 20, DepartmentName = "مكتب الشؤون القانونية ودراسة التشريعات", perent =14, state = true },
-                new Department { Id = 21, DepartmentName = "مكتب رئيس الهيئة", perent =0, state = true },
-                new Department { Id = 22, DepartmentName = "مكتب وكيل الهيئة", perent =21, state = true },
+                new Department { Id = 19, DepartmentName = "مكتب المحفوظات ", perent = 0, state = true },
+                new Department { Id = 20, DepartmentName = "مكتب الشؤون القانونية ودراسة التشريعات", perent = 0, state = true },
+                new Department { Id = 21, DepartmentName = "مكتب رئيس الهيئة", perent = 0, state = true },
+                new Department { Id = 22, DepartmentName = "مكتب وكيل الهيئة", perent = 0, state = true },
                 //new Department { Id = 24, DepartmentName = "مكتب التدريب", perent = 21, state = true },
                 new Department { Id = 25, DepartmentName = "مكتب الشؤون الاعلامية", perent = 0, state = true },
 
                 new Department { Id = 26, DepartmentName = "الادارة العامة للرقابة الخارجية ", perent = 0, state = true },
-                new Department { Id = 28, DepartmentName = "لجنة صندوق العاملين", perent = 1, state = true },
+                new Department { Id = 28, DepartmentName = "لجنة صندوق العاملين", perent = 0, state = true },
                 //new Department { Id = 29, DepartmentName = "مكتب الشكاوي والبلاغات   ", perent = 1, state = true },
                 //new Department { Id = 30, DepartmentName = "مكتب شؤون الفروع ", perent = 1, state = true },
                 //new Department { Id = 31, DepartmentName = "مكتب المتابعة", perent = 1, state = true },
-                new Department { Id = 32, DepartmentName = "مكتب التعاون الدولي والتواصل", perent = 1, state = true },
+                new Department { Id = 32, DepartmentName = "مكتب التعاون الدولي والتواصل", perent = 0, state = true },
                 //new Department { Id = 33, DepartmentName = "الادارة العامة للرقابة علي لجان الازمة واللجان التسييرية والمؤقتة", perent = 1, state = true },
-                new Department { Id = 34, DepartmentName = " وحدة الحماية الشخصية", perent = 1, state = true },
-                new Department { Id = 35, DepartmentName = "وحدة العلاقات الخاصة بمكتب الرئيس", perent = 1, state = true },
-                new Department { Id = 36, DepartmentName = "مكتب التحري والمعلومات", perent = 10, state = true },
-                new Department { Id = 38, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الخدمية والأمنية", perent = 14, state = true },
-                new Department { Id = 39, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الإنتاجية والبنية الأساسية", perent = 14, state = true },
-                new Department { Id = 40, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الاقتصادية والاستثمار", perent = 14, state = true },
-                new Department { Id = 41, DepartmentName = "الإدارةالعامة للموارد البشرية", perent = 21, state = true },
-                new Department { Id = 42, DepartmentName = "الإدارةالعامة للشؤون الإدارية والخدمات", perent = 21, state = true },
-                new Department { Id = 43, DepartmentName = "الإدارةالعامة للشؤون المالية", perent = 21, state = true },
+                new Department { Id = 34, DepartmentName = " وحدة الحماية الشخصية", perent = 0, state = true },
+                new Department { Id = 35, DepartmentName = "وحدة العلاقات الخاصة بمكتب الرئيس", perent = 0, state = true },
+                new Department { Id = 36, DepartmentName = "مكتب التحري والمعلومات", perent = 0, state = true },
+                new Department { Id = 38, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الخدمية والأمنية", perent = 0, state = true },
+                new Department { Id = 39, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الإنتاجية والبنية الأساسية", perent = 0, state = true },
+                new Department { Id = 40, DepartmentName = "الإدارة العامة للرقابة علي القطاعات الاقتصادية والاستثمار", perent = 0, state = true },
+                new Department { Id = 41, DepartmentName = "الإدارةالعامة للموارد البشرية", perent = 0, state = true },
+                new Department { Id = 42, DepartmentName = "الإدارةالعامة للشؤون الإدارية والخدمات", perent = 0, state = true },
+                new Department { Id = 43, DepartmentName = "الإدارةالعامة للشؤون المالية", perent = 0, state = true },
 
-                new Department { Id = 44, DepartmentName = "لجنة الموقع", perent = 10, state = true },
+                new Department { Id = 44, DepartmentName = "لجنة الموقع", perent = 0, state = true },
                 new Department { Id = 49, DepartmentName = "فرع العزيزية", perent = 0, state = true },
-                new Department { Id = 50, DepartmentName = "فرع غرب طرابلس", perent = 14, state = true },
-                new Department { Id = 51, DepartmentName = "فرع مصراته", perent = 14, state = true },
-                new Department { Id = 52, DepartmentName = "فرع ترهونة", perent = 14, state = true },
+                new Department { Id = 50, DepartmentName = "فرع غرب طرابلس", perent = 0, state = true },
+                new Department { Id = 51, DepartmentName = "فرع مصراته", perent = 0, state = true },
+                new Department { Id = 52, DepartmentName = "فرع ترهونة", perent = 0, state = true },
                 new Department { Id = 53, DepartmentName = "فرع الزنتان", perent = 0, state = true },
                 new Department { Id = 54, DepartmentName = "لجنة ربط الفروع ", perent = 0, state = true },
                 new Department { Id = 55, DepartmentName = "لجنة متابعة تنفيد مبني الهيئة   ", perent = 0, state = true },
-                new Department { Id = 56, DepartmentName = "فرع شرق طرابلس", perent = 0, state = true }
-                 
+                new Department { Id = 56, DepartmentName = "فرع شرق طرابلس", perent = 0, state = true },
+               
+                  new Department { Id = 90, DepartmentName = "قسم البرمجة  ", perent = 17, state = true },
+                new Department { Id = 91, DepartmentName = "قسم الشبكات", perent = 17, state = true }
                                          );
-            
+
 
             modelBuilder.Entity<Extrmal_Section>().HasData(
 
@@ -257,23 +259,29 @@ namespace MMSystem.Model
                 );
 
             modelBuilder.Entity<MailStatus>().HasData(
-            new MailStatus { 
-            
-            flag=1,sent="لم ترسل",state=true,inbox="",
+            new MailStatus
+            {
+
+                flag = 1,
+                sent = "لم ترسل",
+                state = true,
+                inbox = "",
             },
             new MailStatus
             {
 
                 flag = 2,
                 sent = "لم تقرأ",
-                state = true,inbox="لم يتم قراءة البريد"
-            }, 
+                state = true,
+                inbox = "لم يتم قراءة البريد"
+            },
             new MailStatus
             {
 
                 flag = 3,
                 sent = "قرأت ",
-                state = true,inbox = "تم قراءة البريد"
+                state = true,
+                inbox = "تم قراءة البريد"
             },
             new MailStatus
             {
@@ -287,7 +295,7 @@ namespace MMSystem.Model
 
                 flag = 5,
                 sent = "تم الرد من قبلك",
-                state = true ,
+                state = true,
                 inbox = "يوجد رد جديد من الادارة المرسلة"
             },
             new MailStatus
@@ -299,10 +307,11 @@ namespace MMSystem.Model
                 inbox = "تم سحب البريد من قبلك"
             });
 
-            modelBuilder.Entity<HistortyName>().HasData(new HistortyName { 
-            ID=1,
-            name="اضافة بريد"
-            
+            modelBuilder.Entity<HistortyName>().HasData(new HistortyName
+            {
+                ID = 1,
+                name = "اضافة بريد"
+
             }, new HistortyName
             {
                 ID = 2,
@@ -323,7 +332,7 @@ namespace MMSystem.Model
             },
             new HistortyName
             {
-                ID =5,
+                ID = 5,
                 name = "حدف صورة"
 
             },
@@ -407,7 +416,7 @@ namespace MMSystem.Model
                       ID = 17,
                       name = " عدد النسخ"
 
-                  }  , new HistortyName
+                  }, new HistortyName
                   {
                       ID = 18,
                       name = "طباعة حافظة"
@@ -446,6 +455,21 @@ namespace MMSystem.Model
                   {
                       ID = 25,
                       name = "ملاحظات  في المحفوظات "
+
+                  },new HistortyName
+                  {
+                      ID = 26,
+                      name = "حفظ اعادة توجيه البريد"
+
+                  }, new HistortyName
+                  {
+                      ID = 27,
+                      name = "تعديل اعادة توجيه البريد "
+
+                  }, new HistortyName
+                  {
+                      ID = 28,
+                      name = "ارسال اعادة توجيه البريد "
 
                   }
 

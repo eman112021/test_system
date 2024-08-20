@@ -23,7 +23,7 @@
                   </h3>
                 </div>
 
-                <fieldset class="w-6/12 mr-3 mt-2">
+                <fieldset v-if="isperent=='true'" class="w-6/12 mr-3 mt-2">
                   <div class="flex items-center">
                     <legend class="text-sm font-semibold text-gray-800 ml-4">
                       نوع البريد
@@ -326,7 +326,7 @@
                       </div> -->
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div v-if="isperent=='true'" class="sm:col-span-2">
                       <label
                         for="general_incoming_number"
                         class="block text-sm font-semibold text-gray-800"
@@ -402,7 +402,7 @@
                       </div> -->
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div v-if="isperent=='true'" class="sm:col-span-2">
                       <label
                         for="year"
                         class="block text-sm font-semibold text-gray-800"
@@ -2802,8 +2802,14 @@
               <!-- </section> -->
 
 
+            
             </div>
           </main>
+        <div>
+
+          ..
+        </div>
+
         </div>
       </div>
     </div>
@@ -3596,6 +3602,15 @@ console.log("index="+ind);
       }
     };end 21/1/2023*/
     //var   conn= null;
+
+    this.isperent = localStorage.getItem('isperent');
+
+    if(this.isperent != "true"){
+
+this.mailType=1
+}
+
+
     var date = new Date();
 
     var month = date.getMonth() + 1;
@@ -3672,6 +3687,9 @@ console.log("index="+ind);
 
 
       image_rotate: true,
+      isperent:false,
+
+      image_rotate : true,
       doc_number_to_search: "",
       delete_all_documents: false,
 
@@ -4192,6 +4210,7 @@ console.log("index="+ind);
 
 
 
+    
     add_sector_side_to_array() {
       // // sector_side
 
@@ -4362,7 +4381,7 @@ console.log("index="+ind);
         this.screenFreeze = true;
         this.loading = true;
         this.$http.documentService
-          .GetAllDocN(this.mailId, this.doc_number)
+          .GetAllDocN(this.mailId, this.doc_number,Number(this.my_department_id))
           .then((res) => {
             this.total_of_doc = res.data.total;
 
@@ -4651,7 +4670,7 @@ console.log("fun1");
       this.screenFreeze = true;
       this.loading = true;
       this.$http.documentService
-        .GetAllDocN(this.mailId, this.doc_number)
+        .GetAllDocN(this.mailId, this.doc_number,Number(this.my_department_id))
         .then((res) => {
           this.total_of_doc = res.data.total;
 
@@ -4726,6 +4745,7 @@ console.log("fun1");
               this.imagesToSend.push({
                 baseAs64: mgs["image"][i],
                 index: this.indexOfimagesToShow,
+                department_id:Number(this.my_department_id),
               });
             }
 
@@ -4892,7 +4912,7 @@ console.log("close code="+event.code);
       this.screenFreeze = true;
       this.loading = true;
       this.$http.mailService
-        .GetAllDocuments(this.mailId, Number(localStorage.getItem("AY_LW")))
+        .GetAllDocuments(this.mailId, Number(localStorage.getItem("AY_LW")),Number(this.my_department_id))
         .then((res) => {
           this.image_to_print_n = res.data;
           setTimeout(() => {
@@ -5616,14 +5636,34 @@ console.log("close code="+event.code);
     },
 
     GetAllDepartments() {
+
+      if(this.isperent=='true'){
+
       this.$http.mailService
-        .AllDepartments()
+        .AllDepartments_and_mysections( localStorage.getItem(
+              "current_department_id"))
         .then((res) => {
           this.departments = res.data;
         })
         .catch((err) => {
           console.log(err);
         });
+      }
+
+        else{
+
+              
+this.$http.mailService
+  .get_department_and_sections( localStorage.getItem(
+        "current_department_id"))
+  .then((res) => {
+    this.departments = res.data;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+}
     },
 
     updateMail() {
@@ -6272,6 +6312,7 @@ console.log("close code="+event.code);
         this.imagesToSend.push({
           baseAs64: scannedImage.src,
           index: this.indexOfimagesToShow,
+          department_id:Number(this.my_department_id),
         });
 
         // if (this.imagesToSend.length > 0) {
@@ -6324,6 +6365,7 @@ console.log("close code="+event.code);
         this.imagesToSend.push({
           baseAs64: scannedImage.src,
           index: this.indexOfimagesToShow,
+          department_id:Number(this.my_department_id),
         });
 
         // if (this.imagesToSend.length > 0) {

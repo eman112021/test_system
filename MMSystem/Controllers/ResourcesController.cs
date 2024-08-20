@@ -22,13 +22,23 @@ namespace MMSystem.Controllers
         }
 
 
-        [HttpGet("GetMailResources")]
-        public async Task<IActionResult> GetMailResources(int mail_id, int userId)
+        [HttpGet("GetMailResources")] 
+        public async Task<IActionResult> GetMailResources(int mail_id, int userId, int department_id)
         {
 
-           List< Mail_ResourcescsDto >list = await _resourcescs.GetAllRes(mail_id,userId);
+           List< Mail_ResourcescsDto >list = await _resourcescs.GetAllRes(mail_id,userId,department_id);
                 if(list.Count>0)
             return Ok(list);
+            return NotFound("لايوجد صور ");
+        }
+
+        [HttpGet("GetMailResourcesSection")]
+        public async Task<IActionResult> GetMailResourcesSection(int mail_id, int userId, int department_id)
+        {
+
+            List<Mail_ResourcescsDto> list = await _resourcescs.GetAllResSection(mail_id, userId, department_id);
+            if (list.Count > 0)
+                return Ok(list);
             return NotFound("لايوجد صور ");
         }
 
@@ -78,12 +88,12 @@ namespace MMSystem.Controllers
 
         //api/Resources/GetAllDoc
         [HttpGet("GetAllDoc")]
-        public async Task<IActionResult> GetAllDoc(int mail_id, int page_number)
+        public async Task<IActionResult> GetAllDoc(int mail_id, int page_number, int department_id)
         {
 
             try
             {
-                var result = await _resourcescs.GetAllResswithPage(mail_id, page_number);
+                var result = await _resourcescs.GetAllResswithPage(mail_id, page_number,  department_id);
 
                 if (result.total > 0)
                     return Ok(result);
@@ -103,11 +113,42 @@ namespace MMSystem.Controllers
 
 
         }
-        [HttpDelete("delete_all_image")]
-        public async Task<IActionResult> delete_all_image(int id,int userId)
+
+
+        //api/Resources/GetAllDocSction
+        //جلب الصور للفروع
+        [HttpGet("GetAllDocSection")]
+        public async Task<IActionResult> GetAllDocSection(int mail_id, int page_number, int department_id)
         {
 
-            var resulte = await _resourcescs.delete_all_image(id, userId);
+            try
+            {
+                var result = await _resourcescs.GetAllResswithPageSection(mail_id, page_number, department_id);
+
+                if (result.total > 0)
+                    return Ok(result);
+                else
+                {
+
+                    return NotFound("لايوجد صور");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(new { massege = ex.Message, StatusCode = 400 });
+            }
+
+
+
+        }
+        [HttpDelete("delete_all_image")]
+        public async Task<IActionResult> delete_all_image(int id,int userId, int departmentid)
+        {
+
+            var resulte = await _resourcescs.delete_all_image(id, userId, departmentid);
             
                 return Ok(resulte);
         }

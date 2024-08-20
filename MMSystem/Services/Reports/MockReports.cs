@@ -855,11 +855,17 @@ namespace MMSystem.Services.Reports
 
 
 
+            var dep1 = await _data.Departments.FindAsync(departmentid);
 
             //*************code stop 14/12/2023
             //  var dep = await _data.Departments.Where(x => x.Id != departmentid).ToListAsync();
             //  var listOfStautes = await _data.MailStatuses.ToListAsync();
 
+         //********************14/8/2024
+         //   var dep = await _data.Departments.Where(x => x.Id != departmentid && (x.perent == 0 || x.perent == departmentid || x.perent == dep1.perent)).ToListAsync();
+           
+          //  var listOfStautes = await _data.MailStatuses.ToListAsync();
+        //***********************end 14/8/2024
 
 
             //  foreach (var item in dep)

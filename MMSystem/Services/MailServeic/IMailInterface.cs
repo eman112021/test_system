@@ -15,6 +15,7 @@ namespace MMSystem.Services.MailServeic
     {
         Task<MailDto> Getdto(int id, int type);
 
+        Task<List<RViewModel>> GetRepliesList(int SendsToId);
 
         Task<bool> addMail( MailViewModel mail);
 
@@ -38,6 +39,7 @@ namespace MMSystem.Services.MailServeic
         Task<bool> DeletePhote(int id,int userId);
         Task<bool> deleteSender(int mail_id, int departmentId,int userid);
 
+    
         Task<List<MailStatus>> GetMailStatuses();
 
 
@@ -50,8 +52,9 @@ namespace MMSystem.Services.MailServeic
         Task<bool> is_exisite_genaral_inbox_number(int Genaral_inbox_Number);
         Task<bool> conclusion(int MailID, string conclusion);
 
-
+       
         Task<bool> delete_sector(int id);
+        Task<List<SendsDetalies>> GetDetaliesInIncomingMails(int mail_id, int department_id);
 
 
         Task<List<REsViewModel>> Reppor();
@@ -59,5 +62,10 @@ namespace MMSystem.Services.MailServeic
 
         Task<List<ReportViewModelData>> ReportViewModelData();
 
+        Task<MVM> GetMailAndResendList(int mail_id, int Department_Id, int type);
+        Task<EIMVM> GetExternalbox(int mail_id, int Depa, int type);
+        Task<ExInboxModel> GetExternalboxAndResended(int mail_id, int Depa, int type);
+  
+    
     }
 }

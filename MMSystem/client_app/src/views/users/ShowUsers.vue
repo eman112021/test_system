@@ -35,7 +35,7 @@
 
             <div class="relative">
               <button
-                @click="departmentselect = !departmentselect"
+                @click="departmentselect = !departmentselect , GetBranchOfDepartment()"
                 @keyup.space.prevent
                 id="department"
                 class="
@@ -55,10 +55,11 @@
               "
               >
               <input
-              @click="departmentNameSelected='',departmentIdSelected=''"
+              @click="departmentNameSelected='',departmentIdSelected='',branchdepartmentNameSelected='' "
                           v-model="departmentNameSelected"
                           type="text"
                           class="h-6 w-full"
+                          placeholder="إختر الإدارة"
                         />
                 <!-- {{ departmentNameSelected }} -->
               </button>
@@ -83,6 +84,7 @@
                 <button
                   class="block focus:outline-none w-full my-1 text-right"
                   @click="
+                    
                     selectdepartment(department.id, department.departmentName);
                     departmentselect = !departmentselect;
                   "
@@ -93,6 +95,97 @@
                 </button>
               </div>
             </div>
+
+            
+
+            <!-- <select class="shadow-sm w-full focus:outline-none rounded-md mt-2 px-2 py-1 " name="mangment_name">
+                    <option value="1">التوثيق</option>
+                    <option value="2">مكتب</option>
+
+                </select> -->
+          </div>
+
+          <div class=" w-full">
+            <label class="font-medium mr-1 text-gray-700"> الإدارات الفرعية و الأقسام</label>
+
+            <div class="relative">
+              
+              <button
+                @click="branchdepartmentdelect = !branchdepartmentdelect"
+                @keyup.space.prevent
+                id="department"
+                class="
+                
+                text-right
+                block
+                mt-2
+                w-full
+                rounded-md
+                h-10
+                border
+                text-sm
+                bg-white
+                border-gray-300
+                hover:shadow-sm
+                focus:outline-none focus:border-gray-300
+                p-2
+              "
+              
+              >
+              <input
+              @click="branchdepartmentNameSelected='',branchIdSelected=''"
+                          v-model="branchdepartmentNameSelected"
+                          type="text"
+                          class="h-6 w-full"
+                          placeholder="إختر الفرع أو القسم"
+                        />
+                <!-- {{ departmentNameSelected }} -->
+              </button>
+
+              <div
+                v-if="branchdepartmentdelect"
+                class="
+                border
+                text-sm
+                bg-white
+                border-gray-300
+                
+                p-2
+                absolute
+                w-full
+                z-20
+                shadow
+                h-24
+                overflow-y-scroll
+                rounded-b-md
+              "
+              >
+              <button v-if="departmentNameSelected != ''"
+                    class="block focus:outline-none w-full my-1 text-right"
+                    @click="
+                      GetUsersOfDepartment()
+                      userNameSelected ='';
+                      branchdepartmentdelect = !branchdepartmentdelect;
+                      branchdepartmentNameSelected='الأمانة الإدارية';
+                    "
+                  >
+                    <!--  <a  class="w-full block " :id="department.id" @click="test(department.id)" > {{ department.departmentName }}</a>-->
+                  الأمانة الإدارية 
+                  </button>
+                <button
+                  class="block focus:outline-none w-full my-1 text-right"
+                  @click=" 
+                    selectbranchdepartment(department.id, department.departmentName);
+                    branchdepartmentdelect = !branchdepartmentdelect;
+                  "
+                  v-for="department in branches"
+                  :key="department.id"
+                >
+                  {{ department.departmentName }}
+                </button>
+              </div>
+            </div>
+            
 
             <!-- <select class="shadow-sm w-full focus:outline-none rounded-md mt-2 px-2 py-1 " name="mangment_name">
                     <option value="1">التوثيق</option>
@@ -131,6 +224,7 @@
           <div
             class="
             grid grid-cols-6
+            w-full
             border-b
             items-center
             p-1
@@ -143,11 +237,16 @@
               >اسم المستخدم</span
             >
 
-            <span class="col-span-2 mx-auto text-lg font-bold">الإدارة</span>
+            <span class="col-span-2 mx-auto text-lg font-bold">الفرع أو القسم</span>
+
+            
+
 
             <span class="col-span-1 mx-auto text-lg font-bold">الحالة</span>
 
-            <span></span>
+            
+
+            <span> </span>
           </div>
 
           <div>
@@ -163,6 +262,7 @@
                   params: {
                     id: user.userId,
                     departmentName11: departmentNameSelected,
+                    branchdepartmentName11:branchdepartmentNameSelected
                   },
                 }"
               >
@@ -172,7 +272,8 @@
                   user.department_name
                 }}</span>
                 <span class="col-span-2 mx-auto" v-else>{{
-                  departmentNameSelected
+                  branchdepartmentNameSelected
+                 
                 }}</span>
 
                 <span class="col-span-1 mx-auto" v-if="user.state == true"
@@ -256,7 +357,12 @@ import logout from "@/components/logout.vue";
 export default {
   watch: {
     departmentIdSelected: function() {
-      this.GetUsersOfDepartment();
+    //  this.GetUsersOfDepartment();
+      this.GetBranchOfDepartment()
+    },
+
+    branchIdSelected: function() {
+      this.GetUsersOfBranchDepartment();
     },
 
     username: function() {
@@ -265,18 +371,18 @@ export default {
   },
 
   mounted() {
-    if (localStorage.getItem("AY_LW") == null || localStorage.getItem("AY_LW") !=29 || localStorage.getItem("chrome")!=17) {
+    if (localStorage.getItem("AY_LW") == null || localStorage.getItem("AY_LW") !=29 || localStorage.getItem("chrome")!=17 ) {
       this.$router.push("/");
     }
-    this.$http.mailService
-      .GetUsersOfDepartmentControl(this.departmentIdSelected)
-      .then((res) => {
-        console.log(res.data);
-        this.users = res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // this.$http.mailService
+    //   .GetUsersOfDepartmentControl(this.departmentIdSelected)
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     this.users = res.data;
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
 
     this.GetAllDepartments();
   },
@@ -290,10 +396,15 @@ export default {
     return {
       users: [],
 
+      branches: [],
+      branchdepartmentdelect: false,
+      branchdepartmentNameSelected: "",
+      branchIdSelected: "",
+
       departments: [],
       departmentselect: false,
-      departmentNameSelected: "الادارة العامة للتحقيق",
-      departmentIdSelected: "1",
+      departmentNameSelected: " ",
+      departmentIdSelected: "",
       username: "",
     };
   },
@@ -302,16 +413,18 @@ export default {
 
   filterByTerm1() {
       return this.departments.filter((department) => {
-        return department.departmentName.includes(this.departmentNameSelected);
+        return department.departmentName.includes(this.departmentNameSelected );
       });
     },
 
   },
   methods: {
-    GetUsersOfDepartment() {
+   
+  
+   GetUsersOfDepartment() {
       // console.log(this.departmentIdSelected)
-
-      this.$http.mailService
+      
+        this.$http.mailService
         .GetUsersOfDepartmentControl(this.departmentIdSelected)
         .then((res) => {
           console.log(res.data);
@@ -333,9 +446,53 @@ export default {
         });
     },
 
+    GetBranchOfDepartment() {
+      // console.log(this.departmentIdSelected)
+      this.loading = true;
+      this.screenFreeze = true;
+
+      this.$http.mailService
+        .GetBranchOfDepartment(this.departmentIdSelected)
+        .then((res) => {
+          this.loading = false;
+          this.screenFreeze = false;
+          this.branches = res.data;
+        })
+        .catch((err) => {
+          this.branches=[];
+          this.loading = false;
+          this.screenFreeze = false;
+          console.log(err);
+        });
+    },
+
+    GetUsersOfBranchDepartment() {
+      // console.log(this.departmentIdSelected)
+      this.loading = true;
+      this.screenFreeze = true;
+
+      this.$http.mailService
+        .GetUsersOfBranchDepartment(this.branchIdSelected)
+        .then((res) => {
+          this.loading = false;
+          this.screenFreeze = false;
+          this.users = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.loading = false;
+          this.screenFreeze = false;
+        });
+    },
+
     selectdepartment(id, name) {
       this.departmentNameSelected = name;
       this.departmentIdSelected = id;
+    },
+    
+    selectbranchdepartment(id, name) {
+      this.branchdepartmentNameSelected = name;
+      this.branchIdSelected = id;
     },
 
     stop_user(id) {

@@ -12,7 +12,7 @@ namespace MMSystem.Model.Dto
         public int department_Id { get; set; }
         public string Date_Of_Mail { get; set; }
         public string Mail_Summary { get; set; }
-        public string clasification { get; set; }
+        public int clasification { get; set; }
         public int Mail_Type { get; set; }
         public int Genaral_inbox_Number { get; set; }
         public int Genaral_inbox_year { get; set; }
@@ -27,6 +27,8 @@ namespace MMSystem.Model.Dto
 
         public string old_mail_number { get; set; }
         public string office_type { get; set; }
+
+    
 
 
 

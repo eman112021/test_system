@@ -7,6 +7,7 @@
           <navComponent></navComponent>
           <main class="flex-1 relative focus:outline-none pt-2 pb-24">
             <div class="flex justify-between items-center">
+
               <div class="">
                 <h1 class="text-xl font-semibold text-gray-900">
                   البريد الصادر
@@ -47,7 +48,7 @@
                 </span>
               </div>
 
-              <fieldset class="">
+              <fieldset v-if="isperent=='true'" class="">
                 <div class="flex items-center">
                   <legend class="text-base font-medium text-gray-800 w-16">
                     نوع البريد
@@ -116,6 +117,9 @@
                   </div>
                 </div>
               </fieldset>
+
+              <div v-else>                  </div>
+              
             </div>
 
             <div class="mt-2 flex">
@@ -183,7 +187,7 @@
                       />
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div v-if="isperent=='true'" class="sm:col-span-2">
                       <label
                         for="department"
                         class="block text-base font-semibold text-gray-800"
@@ -241,6 +245,67 @@
                         </div>
                       </div>
                     </div>
+
+
+                    <div v-else class="sm:col-span-2">
+                      <label
+                        for="department"
+                        class="block text-base font-semibold text-gray-800"
+                      >
+                        الإدارات المرسل إليها
+                      </label>
+
+                      <div class="relative">
+                        <button
+                          @click="departmentselect = !departmentselect"
+                          @keyup.space.prevent
+                          id="department"
+                          class="text-right block mt-2 w-full rounded-md h-10 border text-sm bg-white border-gray-300 hover:shadow-sm focus:outline-none focus:border-gray-300 p-2"
+                        >
+                          <input
+                            @click="
+                              (departmentNameSelected = ''),
+                                (departmentIdSelected = '')
+                            "
+                            v-model="departmentNameSelected"
+                            type="text"
+                            class="h-6 w-full"
+                          />
+                          <!-- {{ departmentNameSelected }} -->
+                        </button>
+
+                        <div
+                          v-if="departmentselect"
+                          class="border text-sm bg-white border-gray-300 p-2 absolute w-full z-20 shadow h-24 overflow-y-scroll rounded-b-md"
+                        >
+                          <button
+                            class="block focus:outline-none w-full my-1 text-right"
+                            @click="
+                              selectdepartment('', 'الكل');
+                              departmentselect = !departmentselect;
+                            "
+                          >
+                            الكل
+                          </button>
+
+                          <button
+                            class="block focus:outline-none w-full my-1 text-right"
+                            @click="
+                              selectdepartment(
+                                department.id,
+                                department.departmentName
+                              );
+                              departmentselect = !departmentselect;
+                            "
+                            v-for="department in filterByTerm1"
+                            :key="department.id"
+                          >
+                            {{ department.departmentName }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
 
                     <div class="sm:col-span-2">
                       <label
@@ -456,7 +521,7 @@
                       </div>
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div  v-if="isperent=='true'" class="sm:col-span-2">
                       <label
                         for="general_incoming_number"
                         class="block text-base font-semibold text-gray-800"
@@ -492,7 +557,7 @@
 
                     
 
-                 <div class="sm:col-span-2">
+                 <div v-if="isperent=='true'" class="sm:col-span-2">
                         <label
                           for="s-number"
                           class="block text-base font-semibold text-gray-800"
@@ -549,6 +614,7 @@
                         <option value="2023">2023</option>
                          <option value="2024">2024</option>
                             <!--  <option value="2025">2025</option>
+                         
                               <option value="2026">2026</option>
                               <option value="2027">2027</option>
                               <option value="2028">2028</option>
@@ -680,6 +746,33 @@
                         ">
 
                         <span class="text-sm font-bold block ml-1"> بحث</span>
+                    </button>
+                    
+                  </div>
+
+                  <div class="mt-6">
+                    
+                    <button 
+                    @click="   
+                       search_reset()"
+                    
+                    id="search_button" class="
+                    px-8
+                mr-2
+                bg-green-700
+                text-green-50
+                rounded-md
+                py-2
+                border border-green-300
+                hover:bg-green-800
+                focus:outline-none
+                flex
+                items-center
+                justify-center
+                col-span-2
+                        ">
+
+                        <span class="text-sm font-bold block ml-1"> جديد</span>
                     </button>
                     
                   </div>
@@ -838,7 +931,7 @@
                         </div>
 
                         <div class="w-2/6 text-right">
-                          {{ mail.date }}
+                          {{  date_format(mail.date)}}
                         </div>
                       </button>
 
@@ -1762,6 +1855,13 @@ console.log("code sent.vue="+event.code);
     };*/
     //*************21/1/2023
 
+    this.isperent = localStorage.getItem('isperent');
+
+    if(this.isperent != "true"){
+
+      this.mailType=1
+    }
+
     var date = new Date();
 
     var month = date.getMonth() + 1;
@@ -1840,24 +1940,24 @@ console.log("code sent.vue="+event.code);
     },
 
 
-    date_from: function () {
-      this.senders = [];
-      this.show_senders_mail = "";
-      this.replies = [];
-      this.departmentflag = 0;
-      this.departmentName = "";
-      this.page_num = 1;
-     // this.GetSentMail();
-    },
-    date_to: function () {
-      this.senders = [];
-      this.show_senders_mail = "";
-      this.replies = [];
-      this.departmentflag = 0;
-      this.departmentName = "";
-      this.page_num = 1;
-     // this.GetSentMail();
-    },
+    // date_from: function () {
+    //   this.senders = [];
+    //   this.show_senders_mail = "";
+    //   this.replies = [];
+    //   this.departmentflag = 0;
+    //   this.departmentName = "";
+    //   this.page_num = 1;
+    //   this.GetSentMail();
+    // },
+    // date_to: function () {
+    //   this.senders = [];
+    //   this.show_senders_mail = "";
+    //   this.replies = [];
+    //   this.departmentflag = 0;
+    //   this.departmentName = "";
+    //   this.page_num = 1;
+    //   this.GetSentMail();
+    // },
 
 
     // mail_id: function () {
@@ -1976,6 +2076,8 @@ console.log("code sent.vue="+event.code);
     return {
 
       certified:0,
+
+      isperent:false,
 
       image_rotate : true,
       //********21/1/2023
@@ -2398,6 +2500,7 @@ search_reset(){
               this.imagesToSend.push({
                 baseAs64: mgs["image"][i],
                 index: this.indexOfimagesToShow,
+                department_id:Number(this.my_department_id),
               });
             }
           }
@@ -2566,6 +2669,7 @@ search_reset(){
         this.imagesToSend.push({
           baseAs64: scannedImage.src,
           index: this.indexOfimagesToShow,
+          department_id:Number(this.my_department_id),
         });
 
         // if (this.imagesToSend.length > 0) {
@@ -2828,6 +2932,27 @@ search_reset(){
         });
     },
 
+
+
+    date_format(date){
+
+      var date2 = new Date(date);
+
+     
+
+var month = date2.getMonth() + 1;
+var day = date2.getDate();
+
+
+
+if (month < 10) month = "0" + month;
+if (day < 10) day = "0" + day;
+
+return date2.getFullYear() + "-" + month + "-" + day;
+
+
+    },
+
     show_senders(id, mail_type, number) {
       this.screenFreeze = true;
       this.loading = true;
@@ -2878,7 +3003,7 @@ search_reset(){
       this.loading = true;
       this.mailId_to_get_mail_by_id = id;
       this.$http.mailService
-        .GetAllDocuments(id, Number(localStorage.getItem("AY_LW")))
+        .GetAllDocuments(id, Number(localStorage.getItem("AY_LW")),Number(this.my_department_id))
         .then((res) => {
           this.show_images = res.data;
 
@@ -2958,14 +3083,37 @@ search_reset(){
     },
 
     GetAllDepartments() {
+
+
+      if(this.isperent=='true'){
+
+
+      
       this.$http.mailService
-        .AllDepartments()
+        .AllDepartments_and_mysections( localStorage.getItem(
+              "current_department_id"))
         .then((res) => {
           this.departments = res.data;
         })
         .catch((err) => {
           console.log(err);
         });
+      }
+
+      else{
+
+              
+      this.$http.mailService
+        .get_department_and_sections( localStorage.getItem(
+              "current_department_id"))
+        .then((res) => {
+          this.departments = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      }
     },
 
     selectdepartment(id, name) {

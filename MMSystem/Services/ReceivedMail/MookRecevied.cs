@@ -525,17 +525,15 @@ namespace MMSystem.Services.ReceivedMail
 
                 //   var c1 = await (from mail in dbcon.Mails.Where(x => x.state == true)
 
-<<<<<<< HEAD
                 //                join send in dbcon.Sends.Where(x=> x.to == mangment && x.State ==true && x.flag >1)
                 //                on mail.MailID equals send.MailID
                 //                   into fullmail
                 //                from b1 in fullmail.DefaultIfEmpty()
-=======
-                                join send in dbcon.Sends.Where(x=> x.State == true && x.flag > 1 && ((x.to == mangment && truley==true) ||(x.resendfrom==mangment && nomangment ==true))   )
-                                on mail.MailID equals send.MailID
-                                   into fullmail
-                                from b1 in fullmail.DefaultIfEmpty()
->>>>>>> stage2
+                          //**********stage2
+                             //   join send in dbcon.Sends.Where(x=> x.State == true && x.flag > 1 && ((x.to == mangment && truley==true) ||(x.resendfrom==mangment && nomangment ==true))   )
+                             //   on mail.MailID equals send.MailID
+                              //     into fullmail
+                              //  from b1 in fullmail.DefaultIfEmpty()
 
 
                 //                join exInmail in dbcon.Extrenal_Inboxes on mail.MailID equals exInmail.MailID
@@ -544,7 +542,6 @@ namespace MMSystem.Services.ReceivedMail
 
 
 
-<<<<<<< HEAD
 
 
                 //                select new Sended_Maill()
@@ -680,14 +677,6 @@ namespace MMSystem.Services.ReceivedMail
                                 select new Sended_Maill
                                 {
                                     
-=======
-                                select new Sended_Maill()
-                                {
-                                    resendfrom = b1 == null ? 0 : b1.resendfrom,
-                                    entity_refernceNum = exin== null ? 0 :exin.entity_reference_number,                               
-                                    externalInbox_sectionid = exin == null ? 0 : exin.SectionId,
-                                    typeofsend = b1 == null ? 1 : b1.type_of_send,
->>>>>>> stage2
                                     mail_id = mail.MailID,
                                    
                                     //   }).Distinct().Count();
@@ -701,16 +690,9 @@ namespace MMSystem.Services.ReceivedMail
                 //*****************added code 
                 //***24/1/2024
 
-<<<<<<< HEAD
                 var ca1 = await (from mail in dbcon.Mails
                                  join send in dbcon.Sends.Where(x => x.State == true && x.flag > 1 && x.to == mangment) on mail.MailID equals send.MailID into sends_mail
                                  //   join send in dbcon.Sends.Where(x => x.State == true && x.flag > 1 && ((x.to == mangment && truley == true) || (x.resendfrom == mangment && nomangment == true))) on mail.MailID equals send.MailID into sends_mail
-=======
-                                         (x.flag > 1) && (mangmentrole == true || (mangmentrole == false /*&& x.tomangment == mangment*/)) &&
-                                         (x.entity_refernceNum == entity_reference_number || entity_number == true)&&
-                                        ((x.flag >= mailReaded && x.flag <= mailnot_readed) || mail_accept == true) &&
-                                        (x.flag == mail_state || State_filter == true) && x.sends_state == true)
->>>>>>> stage2
 
                                  from send_mail in sends_mail.DefaultIfEmpty()
                                  join ex in dbcon.Extrenal_Inboxes on mail.MailID equals ex.MailID into send_mail_ext
@@ -721,7 +703,6 @@ namespace MMSystem.Services.ReceivedMail
                                  join ma_st in dbcon.MailStatuses.Where(x => x.state == true) on send_mail.flag equals ma_st.flag
 
 
-<<<<<<< HEAD
                                  join ex_dep in dbcon.external_Departments on send_mail.Mail.MailID equals ex_dep.Mail_id into all_tables
                                  from all_table in all_tables.DefaultIfEmpty()
 
@@ -740,42 +721,11 @@ namespace MMSystem.Services.ReceivedMail
                                          && (send_mail_ext_m.entity_reference_number == entity_reference_number || entity_number == true))
 
 
-=======
-                         select new Sended_Maill()
-                         {
-                             resendfrom = mail == null ? 0 : mail.resendfrom,
-                             entity_refernceNum = mail == null ? 0 : mail.entity_refernceNum,                    
-                             externalInbox_sectionid = mail == null ? 0 : mail.externalInbox_sectionid,
-                             measure_id = dx == null ? 1 : dx.MeasuresId,
-                             typeofsend = mail.typeofsend,
-                             sends_state = mail == null ? true : mail.sends_state,
-                             mail_id = mail.mail_id,
-                             State = z.inbox,
-                             type_of_mail = mail.type_of_mail,
-                             Mail_Number = mail.Mail_Number,
-                             date = mail.date.Date,
-                             date2 = mail.date2.Date,
-                             Masure_type = dx == null ? " " : dx.MeasuresName,
-                             mangment_sender = n == null ? "" : n.DepartmentName,
-                             mangment_sender_id = mail.mangment_sender_id,
-                             Send_time = mail.Send_time,
-                             time = mail.Send_time,
-                             summary = mail.summary,
-                             flag = mail == null ? 0 : mail.flag,
-                             Sends_id = mail == null ? 0 : mail.Sends_id,
-                             is_multi = mail == null ? true : mail.is_multi,
-                             mail_state = mail.mail_state,
-                             clasfiction = mail.clasfiction,
-                             genralinboxnumber = mail.genralinboxnumber,
-                             tomangment = mail == null ? 0 : mail.tomangment,
-                             dep_fil = mail.dep_fil,
-                             
->>>>>>> stage2
 
 
                                  select new Sended_Maill
                                  {
-
+                                     resendfrom = b1 == null ? 0 : b1.resendfrom,
                                     
                                      entity_refernceNum = send_mail_ext_m == null ? 0 : send_mail_ext_m.entity_reference_number,
 
@@ -793,18 +743,7 @@ namespace MMSystem.Services.ReceivedMail
                                      date = mail.insert_at.Date,
                                      date2 = mail.Date_Of_Mail.Date,
 
-                List<Sended_Maill> dd = new List<Sended_Maill>();
-                foreach (var item in c)
-                {
-
-                    if (!dd.Exists(x => x.mail_id == item.mail_id))
-                    {
-
-                        dd.Add(item);
-                    }
-                }
-
-                c = dd;
+              
 
                                      Masure_type = ms == null ? " " : ms.MeasuresName,
 
@@ -818,13 +757,9 @@ namespace MMSystem.Services.ReceivedMail
                                      Sends_id = send_mail == null ? 0 : send_mail.Id,
 
 
-<<<<<<< HEAD
                                      genralinboxnumber = mail.Genaral_inbox_Number,
 
                                      // }).Distinct();//.OrderByDescending(v => v.date2);
-=======
-                pag.Total = c.Count();
->>>>>>> stage2
 
                                  }).Distinct().OrderByDescending(v => v.date2).Skip((pagenum - 1) * size).Take(size).AsNoTracking().ToListAsync();
 

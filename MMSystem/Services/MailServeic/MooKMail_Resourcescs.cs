@@ -710,7 +710,7 @@ namespace MMSystem.Services.MailServeic
 
         }
 
-        public async Task<RessObj> GetSingleImage( int id)
+        public async Task<RessObj> GetSingleImage(int id)
         {
             try
             {
@@ -718,7 +718,7 @@ namespace MMSystem.Services.MailServeic
                 RessObj ressPage = new RessObj();
 
 
-                ressPage.total = _dbCon.Mail_Resourcescs.Where(x => x.State.Equals(true) &&x.ID==id).ToList().Count();
+                ressPage.total = _dbCon.Mail_Resourcescs.Where(x => x.State.Equals(true) && x.ID == id).ToList().Count();
 
                 var list = await _dbCon.Mail_Resourcescs.OrderBy(x => x.order).
                  Where(x => x.ID == id && x.State == true).Take(1).ToListAsync();
@@ -759,6 +759,7 @@ namespace MMSystem.Services.MailServeic
 
                 throw;
             }
+        }
         public Task<List<Mail_ResourcescsDto>> GetAll(int id)
         {
             throw new NotImplementedException();

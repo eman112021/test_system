@@ -587,10 +587,9 @@ export default {
 
             localStorage.setItem("AY_LW", this.user.administrator.userId);
             sessionStorage.setItem("id", this.user.administrator.userId);
-            localStorage.setItem(
 
-
-            if(!this.branchdepartmentNameSelected) {
+            
+            if (!this.branchdepartmentNameSelected) {
 
               localStorage.setItem(
               "current_department_name",
@@ -604,7 +603,7 @@ export default {
               this.branchdepartmentNameSelected
             );
 
-            })
+            }
 
            
 
@@ -637,6 +636,7 @@ export default {
             );
               
             }
+
             else {
 
               localStorage.setItem(

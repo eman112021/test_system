@@ -422,15 +422,7 @@
                   id="scroll"
                   class="h-72 overflow-y-scroll mt-4 rounded-lg py-2 border border-green-400"
                 >
-                  <div
-                    v-for="(reply, index) in replies"
-                    :key="index"
-                    :class="
-                      reply.reply.to == my_department_id
-                        ? ' flex-row-reverse justify-start '
-                        : 'justify-start'
-                    "
-                    class="w-full my-0.5 flex px-2"
+          
                 <button
                 v-if="isperent=='true' && mailType !=2 && this.department_id2 != this.my_department_id"
                 class="border flex justify-between w-44 border-black duration-300 bg-white pl-2 pr-6 py-2 rounded-md text-gray-900 font-bold hover:bg-green-600 hover:text-white focus:outline-none"
@@ -571,9 +563,8 @@
                       </label>
                       <!-- v-if="mail_flag <= 2 || roles.includes('7')" -->
                       <textarea
-                        id=""
-                        class="block w-full h-20 text-sm rounded-md border hover:shadow-sm focus:outline-none border-green-400 p-2"
-                        v-model="reply_to_add"
+                       
+                 
                         v-model="required_action2"
                         id="required_action"
                         rows="3"
@@ -1192,7 +1183,7 @@
                   </div>
                 </section>
               </div>
-
+            </div>
 
             </div>
           </main>

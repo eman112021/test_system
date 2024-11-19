@@ -45,7 +45,7 @@ namespace MMSystem.Services.DashBords
             //////////// مجموع  الداخلي التي لم يقرائ //////////////
 
             var Notreaded_internell_externl = await (from x in DbCon.Mails.Where(x => x.Department_Id == ManagementId && x.Mail_Type == 1 && x.state == true)
-                                                     join y in DbCon.Sends.Where(y => y.flag == 2) on x.MailID equals y.MailID
+                                                  //   join y in DbCon.Sends.Where(y => y.flag == 2) on x.MailID equals y.MailID
                                                     // select x).Distinct().ToListAsync();
                                                      //***********  الكود السابق قبل merge 14/8/2024
                                                //     select x).Distinct().CountAsync();

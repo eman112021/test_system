@@ -419,6 +419,8 @@ namespace MMSystem.Controllers
 
                 return BadRequest(new Result() { message = "حدث خطأ", statusCode = 400 });
             }
+        }
+
         [HttpGet("GetMailInfoWithResend")]
         public async Task<IActionResult> GetMailInfo(int mail_id, int Department_Id, int type)
         {

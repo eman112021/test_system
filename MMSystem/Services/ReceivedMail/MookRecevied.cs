@@ -725,7 +725,7 @@ namespace MMSystem.Services.ReceivedMail
 
                                  select new Sended_Maill
                                  {
-                                     resendfrom = b1 == null ? 0 : b1.resendfrom,
+                                  //   resendfrom = b1 == null ? 0 : b1.resendfrom,
                                     
                                      entity_refernceNum = send_mail_ext_m == null ? 0 : send_mail_ext_m.entity_reference_number,
 

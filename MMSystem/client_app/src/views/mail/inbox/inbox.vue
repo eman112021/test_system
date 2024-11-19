@@ -2237,7 +2237,7 @@ consol.log("code inbox.vue="+event.code);
       this.GetInboxs();
     },
 //************code stop 1/2/2024
-   // departmentNameSelected: function() {
+    departmentNameSelected: function() {
 
     //  if(this.departmentNameSelected==""){
      // this.page_num = 1;
